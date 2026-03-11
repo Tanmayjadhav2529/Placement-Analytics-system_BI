@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}Students - Placement Analytics{% endblock %}
+{% block page_title %}Student Management{% endblock %}
+{% block page_subtitle %}Manage student records{% endblock %}
+
+{% block content %}
+<div class="page-actions">
+    <div class="search-filter-bar">
+        <form method="GET" class="search-form" id="student-search-form">
+            <div class="search-input-wrap">
+                <i class="bi bi-search"></i>
+                <input type="text" name="q" value="{{ query }}" placeholder="Search by name, branch, or skills..." id="student-search-input">
+            </div>
+            <button type="submit" class="btn-primary-sm">Search</button>
+        </form>
+    </div>
+    <div class="action-buttons">
+        <a href="{% url 'upload_dataset' %}" class="btn-secondary-sm">
+            <i class="bi bi-cloud-upload"></i> Import
+        </a>
+        <a href="{% url 'add_student' %}" class="btn-primary-sm" id="add-student-btn">
+            <i class="bi bi-plus-lg"></i> Add Student
+        </a>
+    </div>
+</div>
+
+<div class="table-card">
+    <div class="table-responsive">
+        <table class="data-table" id="student-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Branch</th>
+                    <th>CGPA</th>
+                    <th>Year</th>
+                    <th>Internship</th>
+                    <th>Skills</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>
+                        <div class="table-user">
+                            <div class="table-avatar">{{ student.name|first|upper }}</div>
+                            <div>
+                                <span class="table-name">{{ student.name }}</span>
+                                <span class="table-sub">{{ student.email|default:"—" }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="branch-badge">{{ student.branch }}</span></td>
+                    <td><strong>{{ student.cgpa }}</strong></td>
+                    <td>{{ student.passing_year }}</td>
+                    <td>
+                        {% if student.internship_done %}
+                        <span class="status-badge status-placed"><i class="bi bi-check"></i> Yes</span>
+                        {% else %}
+                        <span class="status-badge status-notplaced"><i class="bi bi-x"></i> No</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="skills-tags">
+                            {% for skill in student.skills|default:""|truncatewords:5 %}
+                            {% endfor %}
+                            <span class="skill-text">{{ student.skills|default:"—"|truncatechars:40 }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="action-group">
+                            <a href="{% url 'edit_student' student.pk %}" class="action-btn edit" title="Edit">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <form method="POST" action="{% url 'delete_student' student.pk %}" class="d-inline delete-form">
+                                {% csrf_token %}
+                                <button type="submit" class="action-btn delete" title="Delete" onclick="return confirm('Delete this student?')">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="empty-state">
+                        <div class="empty-state-content">
+                            <i class="bi bi-people"></i>
+                            <h4>No students found</h4>
+                            <p>Add your first student or upload a dataset to get started.</p>
+                            <a href="{% url 'add_student' %}" class="btn-primary-sm">
+                                <i class="bi bi-plus-lg"></i> Add Student
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if students.has_other_pages %}
+<div class="pagination-bar">
+    <span class="pagination-info">
+        Page {{ students.number }} of {{ students.paginator.num_pages }}
+        &nbsp;·&nbsp; {{ students.paginator.count }} total students
+    </span>
+    <div class="pagination-controls">
+        {% if students.has_previous %}
+            <a href="?page={{ students.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" class="page-btn">
+                <i class="bi bi-chevron-left"></i> Prev
+            </a>
+        {% endif %}
+        {% for num in students.paginator.page_range %}
+            {% if students.number == num %}
+                <span class="page-btn active">{{ num }}</span>
+            {% elif num > students.number|add:'-3' and num < students.number|add:'3' %}
+                <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}" class="page-btn">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if students.has_next %}
+            <a href="?page={{ students.next_page_number }}{% if query %}&q={{ query }}{% endif %}" class="page-btn">
+                Next <i class="bi bi-chevron-right"></i>
+            </a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

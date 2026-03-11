@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block title %}Placements - Placement Analytics{% endblock %}
+{% block page_title %}Placement Records{% endblock %}
+{% block page_subtitle %}Track student placements{% endblock %}
+
+{% block content %}
+<div class="page-actions">
+    <div class="search-filter-bar">
+        <form method="GET" class="search-form" id="placement-search-form">
+            <div class="search-input-wrap">
+                <i class="bi bi-search"></i>
+                <input type="text" name="q" value="{{ query }}" placeholder="Search by student, company, or status..." id="placement-search-input">
+            </div>
+            <button type="submit" class="btn-primary-sm">Search</button>
+        </form>
+    </div>
+    <div class="action-buttons">
+        <a href="{% url 'add_placement' %}" class="btn-primary-sm" id="add-placement-btn">
+            <i class="bi bi-plus-lg"></i> Add Placement
+        </a>
+    </div>
+</div>
+
+<div class="table-card">
+    <div class="table-responsive">
+        <table class="data-table" id="placement-table">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Company</th>
+                    <th>Package (LPA)</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for placement in placements %}
+                <tr>
+                    <td>
+                        <div class="table-user">
+                            <div class="table-avatar">{{ placement.student.name|first|upper }}</div>
+                            <div>
+                                <span class="table-name">{{ placement.student.name }}</span>
+                                <span class="table-sub">{{ placement.student.branch }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <span class="table-name">{{ placement.company.company_name }}</span>
+                            <span class="table-sub">{{ placement.company.role }}</span>
+                        </div>
+                    </td>
+                    <td><strong>{{ placement.package }}</strong></td>
+                    <td>
+                        <span class="status-badge status-{{ placement.status|lower|cut:' ' }}">
+                            {{ placement.status }}
+                        </span>
+                    </td>
+                    <td>{{ placement.placement_date|default:"—" }}</td>
+                    <td>
+                        <div class="action-group">
+                            <a href="{% url 'edit_placement' placement.pk %}" class="action-btn edit" title="Edit">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <form method="POST" action="{% url 'delete_placement' placement.pk %}" class="d-inline delete-form">
+                                {% csrf_token %}
+                                <button type="submit" class="action-btn delete" title="Delete" onclick="return confirm('Delete this placement record?')">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="empty-state">
+                        <div class="empty-state-content">
+                            <i class="bi bi-briefcase"></i>
+                            <h4>No placement records found</h4>
+                            <p>Start recording placements by clicking the button below.</p>
+                            <a href="{% url 'add_placement' %}" class="btn-primary-sm">
+                                <i class="bi bi-plus-lg"></i> Add Placement
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if placements.has_other_pages %}
+<div class="pagination-bar">
+    <span class="pagination-info">
+        Page {{ placements.number }} of {{ placements.paginator.num_pages }}
+        &nbsp;·&nbsp; {{ placements.paginator.count }} total placements
+    </span>
+    <div class="pagination-controls">
+        {% if placements.has_previous %}
+            <a href="?page={{ placements.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" class="page-btn">
+                <i class="bi bi-chevron-left"></i> Prev
+            </a>
+        {% endif %}
+        {% for num in placements.paginator.page_range %}
+            {% if placements.number == num %}
+                <span class="page-btn active">{{ num }}</span>
+            {% elif num > placements.number|add:'-3' and num < placements.number|add:'3' %}
+                <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}" class="page-btn">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if placements.has_next %}
+            <a href="?page={{ placements.next_page_number }}{% if query %}&q={{ query }}{% endif %}" class="page-btn">
+                Next <i class="bi bi-chevron-right"></i>
+            </a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

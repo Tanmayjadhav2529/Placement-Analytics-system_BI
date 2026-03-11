@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}Companies - Placement Analytics{% endblock %}
+{% block page_title %}Company Management{% endblock %}
+{% block page_subtitle %}Manage company records{% endblock %}
+
+{% block content %}
+<div class="page-actions">
+    <div class="search-filter-bar">
+        <form method="GET" class="search-form" id="company-search-form">
+            <div class="search-input-wrap">
+                <i class="bi bi-search"></i>
+                <input type="text" name="q" value="{{ query }}" placeholder="Search by company, role, or location..." id="company-search-input">
+            </div>
+            <button type="submit" class="btn-primary-sm">Search</button>
+        </form>
+    </div>
+    <div class="action-buttons">
+        <a href="{% url 'upload_dataset' %}" class="btn-secondary-sm">
+            <i class="bi bi-cloud-upload"></i> Import
+        </a>
+        <a href="{% url 'add_company' %}" class="btn-primary-sm" id="add-company-btn">
+            <i class="bi bi-plus-lg"></i> Add Company
+        </a>
+    </div>
+</div>
+
+<div class="table-card">
+    <div class="table-responsive">
+        <table class="data-table" id="company-table">
+            <thead>
+                <tr>
+                    <th>Company</th>
+                    <th>Role</th>
+                    <th>CTC (LPA)</th>
+                    <th>Location</th>
+                    <th>Offer Type</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for company in companies %}
+                <tr>
+                    <td>
+                        <div class="table-user">
+                            <div class="table-avatar company-avatar">{{ company.company_name|first|upper }}</div>
+                            <div>
+                                <span class="table-name">{{ company.company_name }}</span>
+                                <span class="table-sub">{{ company.website|default:"—" }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ company.role }}</td>
+                    <td><strong>{{ company.ctc }}</strong></td>
+                    <td>
+                        <span class="location-tag">
+                            <i class="bi bi-geo-alt"></i> {{ company.location }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="offer-badge offer-{{ company.offer_type|lower|cut:'-' }}">
+                            {{ company.offer_type }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-group">
+                            <a href="{% url 'edit_company' company.pk %}" class="action-btn edit" title="Edit">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <form method="POST" action="{% url 'delete_company' company.pk %}" class="d-inline delete-form">
+                                {% csrf_token %}
+                                <button type="submit" class="action-btn delete" title="Delete" onclick="return confirm('Delete this company?')">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="empty-state">
+                        <div class="empty-state-content">
+                            <i class="bi bi-building"></i>
+                            <h4>No companies found</h4>
+                            <p>Add your first company or upload a dataset.</p>
+                            <a href="{% url 'add_company' %}" class="btn-primary-sm">
+                                <i class="bi bi-plus-lg"></i> Add Company
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if companies.has_other_pages %}
+<div class="pagination-bar">
+    <span class="pagination-info">
+        Page {{ companies.number }} of {{ companies.paginator.num_pages }}
+        &nbsp;·&nbsp; {{ companies.paginator.count }} total companies
+    </span>
+    <div class="pagination-controls">
+        {% if companies.has_previous %}
+            <a href="?page={{ companies.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" class="page-btn">
+                <i class="bi bi-chevron-left"></i> Prev
+            </a>
+        {% endif %}
+        {% for num in companies.paginator.page_range %}
+            {% if companies.number == num %}
+                <span class="page-btn active">{{ num }}</span>
+            {% elif num > companies.number|add:'-3' and num < companies.number|add:'3' %}
+                <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}" class="page-btn">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if companies.has_next %}
+            <a href="?page={{ companies.next_page_number }}{% if query %}&q={{ query }}{% endif %}" class="page-btn">
+                Next <i class="bi bi-chevron-right"></i>
+            </a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

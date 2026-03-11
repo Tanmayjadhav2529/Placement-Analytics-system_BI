@@ -1,0 +1,310 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Placement Analytics{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block page_subtitle %}Overview & Statistics{% endblock %}
+
+{% block content %}
+<!-- KPI Cards -->
+<div class="kpi-grid">
+    <div class="kpi-card kpi-blue">
+        <div class="kpi-icon">
+            <i class="bi bi-people-fill"></i>
+        </div>
+        <div class="kpi-info">
+            <span class="kpi-value">{{ total_students }}</span>
+            <span class="kpi-label">Total Students</span>
+        </div>
+        <div class="kpi-trend up">
+            <i class="bi bi-arrow-up-short"></i>
+        </div>
+    </div>
+
+    <div class="kpi-card kpi-green">
+        <div class="kpi-icon">
+            <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <div class="kpi-info">
+            <span class="kpi-value">{{ total_placements }}</span>
+            <span class="kpi-label">Placed Students</span>
+        </div>
+        <div class="kpi-trend up">
+            <i class="bi bi-arrow-up-short"></i>
+            <span>{{ placement_rate }}%</span>
+        </div>
+    </div>
+
+    <div class="kpi-card kpi-purple">
+        <div class="kpi-icon">
+            <i class="bi bi-building"></i>
+        </div>
+        <div class="kpi-info">
+            <span class="kpi-value">{{ total_companies }}</span>
+            <span class="kpi-label">Companies Visited</span>
+        </div>
+        <div class="kpi-trend neutral">
+            <i class="bi bi-dash"></i>
+        </div>
+    </div>
+
+    <div class="kpi-card kpi-orange">
+        <div class="kpi-icon">
+            <i class="bi bi-currency-rupee"></i>
+        </div>
+        <div class="kpi-info">
+            <span class="kpi-value">{{ avg_salary }} <small>LPA</small></span>
+            <span class="kpi-label">Average Salary</span>
+        </div>
+        <div class="kpi-trend up">
+            <i class="bi bi-arrow-up-short"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row 1 -->
+<div class="charts-grid">
+    <div class="chart-card chart-card-lg">
+        <div class="chart-header">
+            <h3 class="chart-title">Branch-wise Placement</h3>
+            <div class="chart-actions">
+                <button class="chart-action-btn active" data-chart="bar">
+                    <i class="bi bi-bar-chart"></i>
+                </button>
+            </div>
+        </div>
+        <div class="chart-body">
+            <canvas id="branchChart"></canvas>
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-header">
+            <h3 class="chart-title">Offer Type Distribution</h3>
+        </div>
+        <div class="chart-body chart-body-donut">
+            <canvas id="offerChart"></canvas>
+        </div>
+        <div class="donut-legend">
+            <div class="legend-item">
+                <span class="legend-dot" style="background:#3B5BDB"></span>
+                <span>Full-Time ({{ fulltime_count }})</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-dot" style="background:#8B5CF6"></span>
+                <span>Internship ({{ internship_count }})</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-dot" style="background:#06B6D4"></span>
+                <span>Both ({{ both_count }})</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row 2 -->
+<div class="charts-grid">
+    <div class="chart-card chart-card-lg">
+        <div class="chart-header">
+            <h3 class="chart-title">Top Hiring Companies</h3>
+        </div>
+        <div class="chart-body">
+            <canvas id="companyChart"></canvas>
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-header">
+            <h3 class="chart-title">Salary Statistics</h3>
+        </div>
+        <div class="chart-body">
+            <div class="salary-stats-grid">
+                <div class="salary-stat">
+                    <div class="salary-stat-icon high">
+                        <i class="bi bi-arrow-up-circle-fill"></i>
+                    </div>
+                    <div>
+                        <span class="salary-stat-value">{{ max_salary }} LPA</span>
+                        <span class="salary-stat-label">Highest Package</span>
+                    </div>
+                </div>
+                <div class="salary-stat">
+                    <div class="salary-stat-icon avg">
+                        <i class="bi bi-dash-circle-fill"></i>
+                    </div>
+                    <div>
+                        <span class="salary-stat-value">{{ avg_salary }} LPA</span>
+                        <span class="salary-stat-label">Average Package</span>
+                    </div>
+                </div>
+                <div class="salary-stat">
+                    <div class="salary-stat-icon low">
+                        <i class="bi bi-arrow-down-circle-fill"></i>
+                    </div>
+                    <div>
+                        <span class="salary-stat-value">{{ min_salary }} LPA</span>
+                        <span class="salary-stat-label">Lowest Package</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Placements Table -->
+<div class="table-card">
+    <div class="table-header">
+        <h3 class="table-title">Recent Placements</h3>
+        <a href="{% url 'placement_list' %}" class="btn-view-all">
+            View All <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Company</th>
+                    <th>Package</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in recent_placements %}
+                <tr>
+                    <td>
+                        <div class="table-user">
+                            <div class="table-avatar">{{ p.student.name|first|upper }}</div>
+                            <div>
+                                <span class="table-name">{{ p.student.name }}</span>
+                                <span class="table-sub">{{ p.student.branch }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ p.company.company_name }}</td>
+                    <td><strong>{{ p.package }} LPA</strong></td>
+                    <td>
+                        <span class="status-badge status-{{ p.status|lower|cut:' ' }}">
+                            {{ p.status }}
+                        </span>
+                    </td>
+                    <td>{{ p.placement_date|default:"—" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4">No placements recorded yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Chart.js default config
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.font.size = 12;
+        Chart.defaults.plugins.legend.display = false;
+
+        // Branch Chart
+        const branchLabels = JSON.parse('{{ branch_labels|escapejs }}');
+        const branchPlaced = JSON.parse('{{ branch_placed|escapejs }}');
+        const branchTotal = JSON.parse('{{ branch_total|escapejs }}');
+
+        if (branchLabels.length > 0) {
+            new Chart(document.getElementById('branchChart'), {
+                type: 'bar',
+                data: {
+                    labels: branchLabels,
+                    datasets: [
+                        {
+                            label: 'Total Students',
+                            data: branchTotal,
+                            backgroundColor: 'rgba(59, 91, 219, 0.15)',
+                            borderColor: '#3B5BDB',
+                            borderWidth: 2,
+                            borderRadius: 6,
+                        },
+                        {
+                            label: 'Placed',
+                            data: branchPlaced,
+                            backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                            borderColor: '#10B981',
+                            borderWidth: 0,
+                            borderRadius: 6,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: true, position: 'top' } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f0f0f0' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // Offer Type Donut
+        const offerData = JSON.parse('{{ offer_data|escapejs }}');
+        if (offerData.some(v => v > 0)) {
+            new Chart(document.getElementById('offerChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Full-Time', 'Internship', 'Both'],
+                    datasets: [{
+                        data: offerData,
+                        backgroundColor: ['#3B5BDB', '#8B5CF6', '#06B6D4'],
+                        borderWidth: 0,
+                        hoverOffset: 8,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        // Company Hiring Chart
+        const companyNames = JSON.parse('{{ company_names|escapejs }}');
+        const companyHires = JSON.parse('{{ company_hires|escapejs }}');
+
+        if (companyNames.length > 0) {
+            new Chart(document.getElementById('companyChart'), {
+                type: 'bar',
+                data: {
+                    labels: companyNames,
+                    datasets: [{
+                        label: 'Hires',
+                        data: companyHires,
+                        backgroundColor: [
+                            '#3B5BDB', '#8B5CF6', '#06B6D4', '#10B981',
+                            '#F59E0B', '#EF4444', '#5C7CFA', '#34d399',
+                            '#a78bfa', '#67e8f9'
+                        ],
+                        borderWidth: 0,
+                        borderRadius: 6,
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { beginAtZero: true, grid: { color: '#f0f0f0' } },
+                        y: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
