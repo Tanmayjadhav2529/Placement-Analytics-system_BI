@@ -1,6 +1,6 @@
 import os
 
-base_dir = r"d:\placement\placement_analytics_system"
+base_dir = r"d:\placement"
 
 dirs = [
     "placement_analytics_system",

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Placement - Placement Analytics{% endblock %}
+{% block page_title %}Add Placement{% endblock %}
+{% block page_subtitle %}Record a new placement{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <div class="form-card">
+        <div class="form-card-header">
+            <h2><i class="bi bi-briefcase-fill"></i> New Placement</h2>
+            <p>Link a student to a company placement.</p>
+        </div>
+        <form method="POST" id="add-placement-form">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="{{ form.student.id_for_label }}">Student *</label>
+                    {{ form.student }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.company.id_for_label }}">Company *</label>
+                    {{ form.company }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.package.id_for_label }}">Package (LPA) *</label>
+                    {{ form.package }}
+                    {% if form.package.errors %}<div class="form-error">{{ form.package.errors.0 }}</div>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.status.id_for_label }}">Status *</label>
+                    {{ form.status }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.placement_date.id_for_label }}">Placement Date</label>
+                    {{ form.placement_date }}
+                </div>
+            </div>
+            <div class="form-actions">
+                <a href="{% url 'placement_list' %}" class="btn-secondary-sm">Cancel</a>
+                <button type="submit" class="btn-primary-sm" id="submit-placement">
+                    <i class="bi bi-check-lg"></i> Add Placement
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

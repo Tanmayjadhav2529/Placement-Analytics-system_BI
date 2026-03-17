@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Dataset - Placement Analytics{% endblock %}
+{% block page_title %}Upload Dataset{% endblock %}
+{% block page_subtitle %}Import bulk data from CSV files{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <div class="form-card">
+        <div class="form-card-header">
+            <h2><i class="bi bi-cloud-upload-fill"></i> Bulk Dataset Upload</h2>
+            <p>Upload CSV files to import student, company, or placement data in bulk.</p>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" id="upload-form">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group form-group-full">
+                    <label for="{{ form.dataset_type.id_for_label }}">Dataset Type *</label>
+                    {{ form.dataset_type }}
+                </div>
+                <div class="form-group form-group-full">
+                    <label for="{{ form.file.id_for_label }}">Upload File *</label>
+                    <div class="upload-zone" id="upload-zone">
+                        <div class="upload-zone-content">
+                            <i class="bi bi-cloud-arrow-up"></i>
+                            <h4>Drag & drop your file here</h4>
+                            <p>or click to browse</p>
+                            <span class="upload-hint">Supports CSV and Excel files</span>
+                        </div>
+                        {{ form.file }}
+                    </div>
+                    <div class="file-info" id="file-info" style="display: none;">
+                        <i class="bi bi-file-earmark-spreadsheet"></i>
+                        <span id="file-name"></span>
+                        <button type="button" class="file-remove" id="file-remove">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'dashboard' %}" class="btn-secondary-sm">Cancel</a>
+                <button type="submit" class="btn-primary-sm" id="upload-submit">
+                    <i class="bi bi-upload"></i> Upload & Import
+                </button>
+            </div>
+        </form>
+
+        <!-- CSV Format Guide -->
+        <div class="format-guide">
+            <h3><i class="bi bi-info-circle"></i> CSV Format Guide</h3>
+
+            <div class="guide-tabs">
+                <button class="guide-tab active" data-tab="student-guide">Student</button>
+                <button class="guide-tab" data-tab="company-guide">Company</button>
+                <button class="guide-tab" data-tab="placement-guide">Placement</button>
+            </div>
+
+            <div class="guide-content active" id="student-guide">
+                <p>Required columns:</p>
+                <code>name, branch, cgpa, passing_year, skills, internship_done, email, phone</code>
+                <p class="mt-2">Example:</p>
+                <pre>name,branch,cgpa,passing_year,skills,internship_done,email,phone
+John Doe,CSE,8.5,2025,"Python,Java",True,john@email.com,+919876543210</pre>
+            </div>
+
+            <div class="guide-content" id="company-guide">
+                <p>Required columns:</p>
+                <code>company_name, role, ctc, location, offer_type, website</code>
+                <p class="mt-2">Example:</p>
+                <pre>company_name,role,ctc,location,offer_type,website
+Google,Software Engineer,25.00,Bangalore,Full-Time,https://google.com</pre>
+            </div>
+
+            <div class="guide-content" id="placement-guide">
+                <p>Required columns:</p>
+                <code>student_id, company_id, package, status, placement_date</code>
+                <p class="mt-2">Example:</p>
+                <pre>student_id,company_id,package,status,placement_date
+1,1,25.00,Placed,2025-03-01</pre>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Guide tabs
+    document.querySelectorAll('.guide-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.guide-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.guide-content').forEach(c => c.classList.remove('active'));
+            this.classList.add('active');
+            document.getElementById(this.dataset.tab).classList.add('active');
+        });
+    });
+</script>
+{% endblock %}

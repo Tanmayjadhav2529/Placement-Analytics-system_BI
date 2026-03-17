@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Student - Placement Analytics{% endblock %}
+{% block page_title %}Edit Student{% endblock %}
+{% block page_subtitle %}Update {{ student.name }}'s record{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <div class="form-card">
+        <div class="form-card-header">
+            <h2><i class="bi bi-pencil-square"></i> Edit Student</h2>
+            <p>Update the student details below.</p>
+        </div>
+        <form method="POST" id="edit-student-form">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="{{ form.name.id_for_label }}">Full Name *</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}<div class="form-error">{{ form.name.errors.0 }}</div>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.branch.id_for_label }}">Branch *</label>
+                    {{ form.branch }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.cgpa.id_for_label }}">CGPA *</label>
+                    {{ form.cgpa }}
+                    {% if form.cgpa.errors %}<div class="form-error">{{ form.cgpa.errors.0 }}</div>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.passing_year.id_for_label }}">Passing Year *</label>
+                    {{ form.passing_year }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">Email</label>
+                    {{ form.email }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.phone.id_for_label }}">Phone</label>
+                    {{ form.phone }}
+                </div>
+                <div class="form-group form-group-full">
+                    <label for="{{ form.skills.id_for_label }}">Skills</label>
+                    {{ form.skills }}
+                </div>
+                <div class="form-group">
+                    <div class="form-check-custom">
+                        {{ form.internship_done }}
+                        <label for="{{ form.internship_done.id_for_label }}">Internship Completed</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <a href="{% url 'student_list' %}" class="btn-secondary-sm">Cancel</a>
+                <button type="submit" class="btn-primary-sm" id="update-student">
+                    <i class="bi bi-check-lg"></i> Update Student
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

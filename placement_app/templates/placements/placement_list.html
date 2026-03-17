@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Placements - Placement Analytics{% endblock %}
+{% block page_title %}Placement Records{% endblock %}
+{% block page_subtitle %}Track student placements{% endblock %}
+
+{% block content %}
+<div class="table-card">
+    <div class="table-header-flex">
+        <div>
+            <h3 class="page-title" style="margin: 0;">Placement Records</h3>
+            <p class="page-subtitle">Showing {{ placements.paginator.count }} verified records</p>
+        </div>
+        <div class="action-buttons">
+            <a href="{% url 'add_placement' %}" class="btn-primary-sm" style="height: 40px; border-radius: 10px;">
+                <i class="bi bi-plus-lg"></i> Add Placement
+            </a>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Company</th>
+                    <th>Package (LPA)</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for placement in placements %}
+                <tr>
+                    <td>
+                        <div class="table-user">
+                            <div class="table-avatar">{{ placement.student.name|first|upper }}</div>
+                            <div>
+                                <span class="table-name">{{ placement.student.name }}</span>
+                                <span class="table-sub">{{ placement.student.branch }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <span class="table-name">{{ placement.company.company_name }}</span>
+                            <span class="table-sub">{{ placement.company.role }}</span>
+                        </div>
+                    </td>
+                    <td>{{ placement.package }}</td>
+                    <td>
+                        <span class="status-badge status-{{ placement.status|lower|cut:' ' }}">
+                            {{ placement.status }}
+                        </span>
+                    </td>
+                    <td>{{ placement.placement_date|default:"—" }}</td>
+                    <td>
+                        <div class="action-group">
+                            <a href="{% url 'edit_placement' placement.pk %}" class="action-btn edit" title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <form method="POST" action="{% url 'delete_placement' placement.pk %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="action-btn delete" title="Delete" onclick="return confirm('Delete this record?')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-5">No placement records found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

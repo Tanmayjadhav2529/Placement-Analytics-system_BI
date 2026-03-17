@@ -1,0 +1,21 @@
+name,branch,cgpa,passing_year,skills,internship_done,email,phone
+Aarav Sharma,CSE,8.50,2025,"Python,Django,Machine Learning",True,aarav@email.com,+919876543001
+Priya Patel,IT,9.10,2025,"Java,Spring Boot,SQL",True,priya@email.com,+919876543002
+Rahul Kumar,ECE,7.80,2025,"C++,Embedded Systems,MATLAB",False,rahul@email.com,+919876543003
+Sneha Reddy,CSE,8.90,2025,"Python,React,Node.js",True,sneha@email.com,+919876543004
+Amit Singh,ME,7.20,2024,"AutoCAD,SolidWorks,MATLAB",False,amit@email.com,+919876543005
+Neha Gupta,CSE,9.40,2025,"Python,Data Science,SQL",True,neha@email.com,+919876543006
+Vikram Joshi,IT,8.10,2025,"JavaScript,React,MongoDB",True,vikram@email.com,+919876543007
+Ananya Iyer,ECE,7.60,2024,"VLSI,Verilog,Signal Processing",False,ananya@email.com,+919876543008
+Karan Mehta,CSE,8.70,2025,"Java,AWS,Docker",True,karan@email.com,+919876543009
+Divya Nair,EEE,8.30,2025,"Power Systems,PLC,SCADA",False,divya@email.com,+919876543010
+Rohan Das,CSE,9.00,2025,"Python,TensorFlow,Deep Learning",True,rohan@email.com,+919876543011
+Pooja Verma,IT,7.90,2024,"HTML,CSS,JavaScript,PHP",True,pooja@email.com,+919876543012
+Arjun Rao,ME,7.50,2025,"Thermodynamics,CFD,ANSYS",False,arjun@email.com,+919876543013
+Meera Shah,CSE,8.60,2025,"Python,Flask,PostgreSQL",True,meera@email.com,+919876543014
+Siddharth Chopra,CE,7.40,2025,"AutoCAD,STAAD Pro,Surveying",False,siddharth@email.com,+919876543015
+Ishita Banerjee,CSE,9.20,2025,"C++,Algorithms,System Design",True,ishita@email.com,+919876543016
+Aditya Mishra,IT,8.40,2025,"Python,Django,REST APIs",True,aditya@email.com,+919876543017
+Riya Saxena,ECE,7.70,2024,"IoT,Arduino,Raspberry Pi",False,riya@email.com,+919876543018
+Harsh Agarwal,CSE,8.80,2025,"Java,Microservices,Kubernetes",True,harsh@email.com,+919876543019
+Kavya Menon,EEE,8.00,2025,"Renewable Energy,MATLAB,Simulink",True,kavya@email.com,+919876543020
